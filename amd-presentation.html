@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acid Mine Drainage (AMD) Presentation</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #f97316;
+      --accent-2: #fb923c;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --line: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 24%),
+        linear-gradient(135deg, #0b1120 0%, #111827 100%);
+      overflow: hidden;
+    }
+
+    .deck {
+      height: 100%;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      height: 100%;
+      width: 100%;
+      padding: 56px 64px 72px;
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide-inner {
+      height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 38px 42px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: #f8fafc;
+      margin-bottom: 6px;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      font-size: 1.03rem;
+      line-height: 1.45;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+    }
+
+    .title-grid,
+    .two-col,
+    .three-col,
+    .cases,
+    .metrics {
+      display: grid;
+      gap: 18px;
+    }
+
+    .title-grid {
+      grid-template-columns: 1.25fr 0.95fr;
+      align-items: center;
+      height: 100%;
+    }
+
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cases {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card,
+    .metric,
+    .flow-step,
+    .case,
+    .quote,
+    .banner {
+      background: linear-gradient(180deg, rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+    }
+
+    .metric {
+      padding: 18px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 2rem;
+      color: #fff7ed;
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .accent {
+      color: var(--accent-2);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .chem-box {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px dashed rgba(251, 146, 60, 0.4);
+      background: rgba(249, 115, 22, 0.08);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      color: #ffedd5;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 130px;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-2);
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .flow-step h3 {
+      color: #fdba74;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(17, 24, 39, 0.75);
+    }
+
+    .table th,
+    .table td {
+      padding: 12px 14px;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      text-align: left;
+    }
+
+    .table th {
+      color: #fdba74;
+      font-size: 0.95rem;
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      border: 1px solid rgba(251, 146, 60, 0.35);
+      color: #ffedd5;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .quote {
+      border-left: 4px solid var(--accent);
+      color: #f8fafc;
+    }
+
+    .case h3 {
+      margin-bottom: 8px;
+    }
+
+    .case .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      background: #fdba74;
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .timeline .card {
+      min-height: 126px;
+    }
+
+    .takeaways {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .refs {
+      columns: 2;
+      column-gap: 28px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .refs p {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .progress-shell {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      bottom: 28px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #fbbf24);
+      transition: width 180ms ease;
+    }
+
+    .nav {
+      position: absolute;
+      right: 64px;
+      bottom: 40px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav button {
+      border: 1px solid var(--line);
+      background: rgba(17, 24, 39, 0.9);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .nav button:hover {
+      border-color: rgba(251, 146, 60, 0.45);
+      color: #fff7ed;
+    }
+
+    a {
+      color: #fdba74;
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        background: white;
+      }
+
+      .deck {
+        height: auto;
+      }
+
+      .slide,
+      .slide.active {
+        display: block;
+        position: relative;
+        page-break-after: always;
+        height: 100vh;
+        padding: 18px;
+        background: white;
+        color: black;
+      }
+
+      .slide-inner,
+      .card,
+      .metric,
+      .flow-step,
+      .case,
+      .quote,
+      .banner {
+        box-shadow: none;
+        background: white;
+        color: black;
+      }
+
+      .footer,
+      .nav,
+      .progress-shell {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <section class="slide active">
+      <div class="slide-inner">
+        <div class="title-grid">
+          <div>
+            <div class="eyebrow">Presentation deck</div>
+            <h1>Acid Mine Drainage (AMD)</h1>
+            <p style="font-size:1.25rem; margin-top:12px;">
+              Environmental risk, energy supply chain implications, treatment technologies,
+              economics, regulation, and real-world cases.
+            </p>
+            <div class="pill-row" style="margin-top:20px;">
+              <span class="pill">Energy supply chain</span>
+              <span class="pill">Technology approaches</span>
+              <span class="pill">Economics & finance</span>
+              <span class="pill">Laws & regulation</span>
+              <span class="pill">Case studies</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Key message</h3>
+            <p>
+              AMD is not just a water pollution problem. It is a long-lived operating liability
+              for coal and metal mining, a permitting and financing issue for the energy sector,
+              and increasingly a <span class="accent">resource-recovery opportunity</span> for
+              rare earth elements and other critical minerals.
+            </p>
+            <div class="chem-box" style="margin-top:18px;">
+              2FeS<sub>2</sub> + 7O<sub>2</sub> + 2H<sub>2</sub>O → 2Fe<sup>2+</sup> + 4SO<sub>4</sub><sup>2-</sup> + 4H<sup>+</sup>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Acid mine drainage overview deck</span>
+          <span>Slide 1 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">1. What AMD is</div>
+        <h2>AMD forms when sulfide-bearing rock meets air and water</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>Core process</h3>
+            <ul>
+              <li>Mining exposes pyrite and other sulfide minerals in waste rock, tailings, pits, and underground workings.</li>
+              <li>Oxidation generates sulfuric acid and dissolves iron, aluminum, manganese, and trace metals.</li>
+              <li>Acidophilic microbes can accelerate the reactions and keep the system active.</li>
+              <li>Drainage may remain acidic for decades to centuries if source control is weak.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Why it matters</h3>
+            <ul>
+              <li>Impairs streams, groundwater, and aquatic ecosystems.</li>
+              <li>Corrodes infrastructure and raises treatment costs.</li>
+              <li>Creates long-tail liabilities for operators, governments, and communities.</li>
+              <li>Can occur at both active and abandoned coal and metal mines.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="metric">
+            <strong>pH 2-6</strong>
+            <span>Typical acidic mine drainage range reported by USGS.</span>
+          </div>
+          <div class="metric">
+            <strong>Fe / Al / Mn</strong>
+            <span>Common dissolved metals driving toxicity, sludge, and compliance risk.</span>
+          </div>
+          <div class="metric">
+            <strong>Persistent</strong>
+            <span>Problems often outlast mine closure and require long-term water management.</span>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [1], [2]</span>
+          <span>Slide 2 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">2. Scale of the problem</div>
+        <h2>AMD is a major regional water-quality issue, especially in legacy coal districts</h2>
+        <div class="three-col">
+          <div class="metric">
+            <strong>10,000+ miles</strong>
+            <span>EPA's mining-influenced water guide notes U.S. receiving waters affected primarily by acidic drainage.</span>
+          </div>
+          <div class="metric">
+            <strong>~5,600 miles</strong>
+            <span>Pennsylvania alone reports over 5,600 stream miles impaired by AMD in recent assessments.</span>
+          </div>
+          <div class="metric">
+            <strong>1,205 miles</strong>
+            <span>The West Branch Susquehanna subbasin is one of the most AMD-impaired river regions in the basin.</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Environmental effects</h3>
+            <ul>
+              <li>Orange precipitates and metal hydroxide sludge smother stream habitat.</li>
+              <li>Low pH and dissolved metals reduce biodiversity and fish survival.</li>
+              <li>Downstream water uses can be impaired for irrigation, recreation, and drinking-water systems.</li>
+            </ul>
+          </div>
+          <div class="quote">
+            <p>
+              “Acid mine drainage is the formation and movement of highly acidic water rich in heavy metals.”
+            </p>
+            <p class="muted" style="margin-top:10px;">— U.S. EPA abandoned mine drainage overview</p>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [1], [3], [17], [18]</span>
+          <span>Slide 3 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">3. Energy supply chain</div>
+        <h2>AMD sits inside the energy supply chain as both a liability and a feedstock opportunity</h2>
+        <div class="flow">
+          <div class="flow-step">
+            <h3>1. Extraction</h3>
+            <p>Coal, copper, nickel, cobalt, uranium, and REE-adjacent mining expose sulfides.</p>
+          </div>
+          <div class="flow-step">
+            <h3>2. Waste handling</h3>
+            <p>Waste rock, tailings, pits, and mine voids create long-lived contact zones with air and water.</p>
+          </div>
+          <div class="flow-step">
+            <h3>3. Treatment inputs</h3>
+            <p>Lime, limestone, pumps, aeration, power, labor, sludge management, and monitoring enter the chain.</p>
+          </div>
+          <div class="flow-step">
+            <h3>4. Supply risk</h3>
+            <p>Water liabilities affect permits, bond sizing, operating cost, ESG risk, and community acceptance.</p>
+          </div>
+          <div class="flow-step">
+            <h3>5. Circular value</h3>
+            <p>AMD solids can contain REEs, cobalt, nickel, and manganese that may be recovered for clean-energy materials.</p>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Why this matters to energy systems</h3>
+            <ul>
+              <li>Unmanaged AMD can constrain domestic mining and processing projects.</li>
+              <li>Active treatment creates ongoing energy and reagent demand.</li>
+              <li>Closure planning increasingly needs to include perpetual water treatment risk.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Emerging opportunity</h3>
+            <ul>
+              <li>NETL reports AMD treatment wastes in Appalachia may hold <strong>1,102 tons/year of REE potential</strong>.</li>
+              <li>Its TREE process has reported recovery of up to <strong>90% REE</strong> and <strong>60% Co</strong> in separate steps.</li>
+              <li>This reframes AMD from “waste only” to a possible domestic critical-minerals input stream.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [6], [7], [8]</span>
+          <span>Slide 4 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">4. Technology approaches</div>
+        <h2>Best practice combines prediction, prevention, treatment, and where feasible resource recovery</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Main approaches</th>
+              <th>Best fit</th>
+              <th>Main limits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Prediction</strong></td>
+              <td>Static and kinetic testing, geochemical modeling, waste characterization</td>
+              <td>Project design, permitting, closure planning</td>
+              <td>Uncertainty increases across long time horizons and mixed lithology</td>
+            </tr>
+            <tr>
+              <td><strong>Prevention / source control</strong></td>
+              <td>Covers, encapsulation, underwater storage, alkaline blending, diversion of clean water, backfilling</td>
+              <td>New mines and major reclamation works</td>
+              <td>High capital cost; performance depends on site hydrology and long-term maintenance</td>
+            </tr>
+            <tr>
+              <td><strong>Active treatment</strong></td>
+              <td>Lime or caustic neutralization, aeration, high-density sludge, membrane systems, crystallization</td>
+              <td>High flow, low pH, variable chemistry, tight compliance needs</td>
+              <td>Continuous energy, chemical, labor, and sludge-disposal costs</td>
+            </tr>
+            <tr>
+              <td><strong>Passive / semi-passive treatment</strong></td>
+              <td>Anoxic limestone drains, SAPS, aerobic/anaerobic wetlands, sulfate-reducing bioreactors</td>
+              <td>Remote sites with moderate flow and stable chemistry</td>
+              <td>Land area demand, seasonal effects, clogging, lower tolerance for shock loads</td>
+            </tr>
+            <tr>
+              <td><strong>Recovery / reuse</strong></td>
+              <td>REE and critical-mineral extraction, metal recovery, water reuse</td>
+              <td>Sites with sufficiently enriched solids or brines</td>
+              <td>Still emerging; economics depend on concentration, logistics, and product purity</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="footer">
+          <span>Sources: [1], [3], [6], [8]</span>
+          <span>Slide 5 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">5. Economics, costs, and financing</div>
+        <h2>AMD economics are dominated by long-duration O&amp;M, not just capital cost</h2>
+        <div class="three-col">
+          <div class="metric">
+            <strong>$34 / ton</strong>
+            <span>EPA SBIR example for an in situ limestone drain treating acid load.</span>
+          </div>
+          <div class="metric">
+            <strong>$441 / ton</strong>
+            <span>Comparable conventional caustic soda treatment cost in the same EPA example.</span>
+          </div>
+          <div class="metric">
+            <strong>$0.003 / gal</strong>
+            <span>EPA example estimate for a 100 gpm passive treatment system.</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Active vs passive</h3>
+            <ul>
+              <li><strong>Active systems:</strong> higher reliability and tighter compliance control, but recurring power, chemical, labor, and sludge costs.</li>
+              <li><strong>Passive systems:</strong> lower operating costs, but need land, careful site matching, and maintenance to prevent clogging or performance decline.</li>
+              <li>In practice, many projects use hybrid systems: source control + passive polishing + active backup.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Financing and liability</h3>
+            <ul>
+              <li>Financial assurance and bonding must account for long-term water treatment risk.</li>
+              <li>Public funding often fills gaps at abandoned sites through AML programs and infrastructure appropriations.</li>
+              <li>Resource recovery can offset costs, but should be treated as upside, not the sole financing basis.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="banner">
+          <strong class="accent">Pennsylvania example:</strong>
+          existing AMD treatment systems were estimated to protect streams for about
+          <strong>$5,700 per kilometer per year</strong>; protecting all affected stream kilometers
+          for 25 years was estimated at about <strong>$1.5 billion</strong>.
+        </div>
+        <div class="footer">
+          <span>Sources: [3], [7], [9]</span>
+          <span>Slide 6 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">6. Laws and regulation</div>
+        <h2>AMD is regulated through water-discharge, mine-reclamation, and waste-management frameworks</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>United States</h3>
+            <ul>
+              <li><strong>Clean Water Act / NPDES:</strong> discharge permits incorporate EPA effluent guidelines for coal mining.</li>
+              <li><strong>40 CFR Part 434:</strong> addresses acid or ferruginous mine drainage and related subcategories.</li>
+              <li><strong>Example new-source limits:</strong> total iron 6.0 mg/L daily max and 3.0 mg/L 30-day average; manganese 4.0 / 2.0; TSS 70 / 35; pH 6.0-9.0.</li>
+              <li><strong>SMCRA / AML programs:</strong> fund reclamation and AMD treatment/abatement for abandoned mine lands.</li>
+              <li><strong>CERCLA / Superfund:</strong> applies where abandoned mine contamination requires large federal cleanup action.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>European Union / international</h3>
+            <ul>
+              <li><strong>Extractive Waste Directive (2006/21/EC):</strong> requires mine-waste management plans, permits, monitoring, closure, and prevention of acid/alkaline drainage impacts.</li>
+              <li><strong>Water Framework Directive:</strong> requires protection against deterioration of water status in receiving waters.</li>
+              <li>Across jurisdictions, the direction of travel is similar: stronger closure planning, better waste characterization, more monitoring, and bigger emphasis on “polluter pays.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [4], [5], [11], [12]</span>
+          <span>Slide 7 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">7. Case study</div>
+        <h2>Summitville Mine, Colorado: high-cost cleanup after AMD escalation</h2>
+        <div class="timeline">
+          <div class="card">
+            <h3>Mine context</h3>
+            <p>Open-pit gold mining with cyanide heap leaching in a sulfide-rich setting increased AMD generation.</p>
+          </div>
+          <div class="card">
+            <h3>Failure signal</h3>
+            <p>Acidic, metal-laden drainage damaged aquatic life for more than 20 miles downstream.</p>
+          </div>
+          <div class="card">
+            <h3>Emergency cost</h3>
+            <p>EPA-operated water treatment reportedly cost about <strong>$50,000 per day</strong> during response planning.</p>
+          </div>
+          <div class="card">
+            <h3>Lesson</h3>
+            <p>Source control and closure design are cheaper than indefinite downstream treatment.</p>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Actions taken</h3>
+            <ul>
+              <li>Improved treatment plant operation and controlled mine adit discharges.</li>
+              <li>Moved major acid-generating wastes into lined and capped repositories.</li>
+              <li>Closed disturbed areas and pursued reclamation to reduce ongoing metal loading.</li>
+            </ul>
+          </div>
+          <div class="quote">
+            <p>
+              Summitville is a useful teaching case because it shows how AMD can turn a mining project
+              into a long-term public finance and regulatory issue after operator failure.
+            </p>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [13], [14]</span>
+          <span>Slide 8 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">8. Case study</div>
+        <h2>Wheal Jane, Cornwall: passive treatment showed promise, but scale still required active treatment</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>What happened</h3>
+            <ul>
+              <li>After mine closure and rebound of mine water, a highly publicized release sent acidic, metal-rich water into the Carnon River system.</li>
+              <li>Pilot passive systems were built using aerobic and anaerobic cells, reed beds, rock filters, and different pretreatments.</li>
+              <li>The project demonstrated useful metal removal and natural attenuation pathways.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Main takeaway</h3>
+            <ul>
+              <li>Passive systems can work well, but land requirements, plugging, and high flows may limit scale-up.</li>
+              <li>At Wheal Jane, an active lime treatment plant was ultimately needed to handle the full discharge.</li>
+              <li>It is a strong example of why AMD solutions should be selected by flow regime and chemistry, not ideology.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Sources: [15], [16]</span>
+          <span>Slide 9 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">9. Case study + outlook</div>
+        <h2>Appalachia: AMD treatment as restoration infrastructure and critical-minerals platform</h2>
+        <div class="cases">
+          <div class="case">
+            <span class="tag">Restoration</span>
+            <h3>Pennsylvania treatment systems</h3>
+            <p>
+              More than three decades of systems data show AMD treatment can protect streams cost-effectively
+              and improve water quality, especially in heavily impacted coalfield communities.
+            </p>
+          </div>
+          <div class="case">
+            <span class="tag">Economic justice</span>
+            <h3>Coal transition regions</h3>
+            <p>
+              AMD burdens often overlap with communities facing job loss from the energy transition, making cleanup an environmental and regional-development issue.
+            </p>
+          </div>
+          <div class="case">
+            <span class="tag">Supply chain opportunity</span>
+            <h3>REE recovery from AMD solids</h3>
+            <p>
+              NETL's work suggests AMD treatment wastes could become a domestic source of rare earths, cobalt, and other materials used in advanced energy technologies.
+            </p>
+          </div>
+        </div>
+        <div class="banner">
+          <strong class="accent">Strategic implication:</strong>
+          regions that already spend money on AMD control may be able to move from a pure
+          cost center toward a <strong>remediation + materials recovery</strong> model,
+          if concentration, logistics, and policy support line up.
+        </div>
+        <div class="footer">
+          <span>Sources: [7], [8]</span>
+          <span>Slide 10 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-inner">
+        <div class="eyebrow">10. Conclusions and references</div>
+        <h2>Takeaways</h2>
+        <div class="takeaways">
+          <div class="card">
+            <h3>Key conclusions</h3>
+            <ul>
+              <li>AMD is a predictable geochemical risk that must be designed for early.</li>
+              <li>Source control is usually more durable than relying only on downstream treatment.</li>
+              <li>Financing must reflect the full life-cycle water liability, including closure and post-closure.</li>
+              <li>For the energy supply chain, AMD management affects cost, resilience, permitting, and ESG performance.</li>
+              <li>Recovery of REEs and other critical minerals from AMD solids is promising, but still site-specific.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>References</h3>
+            <div class="refs">
+              <p><strong>[1]</strong> U.S. EPA, <em>Abandoned Mine Drainage</em>, 2025. https://www.epa.gov/polluted-runoff-nonpoint-source-pollution/abandoned-mine-drainage</p>
+              <p><strong>[2]</strong> USGS, <em>Acid Mine Drainage</em>, 2016. https://www.usgs.gov/publications/acid-mine-drainage</p>
+              <p><strong>[3]</strong> U.S. EPA, <em>Reference Guide to Treatment Technologies for Mining-Influenced Water</em>, 2014. Archived EPA PDF.</p>
+              <p><strong>[4]</strong> U.S. EPA, <em>Coal Mining Effluent Guidelines</em>, 2025. https://www.epa.gov/eg/coal-mining-effluent-guidelines</p>
+              <p><strong>[5]</strong> eCFR, <em>40 CFR Part 434, Subpart C: Acid or Ferruginous Mine Drainage</em>. https://www.ecfr.gov/current/title-40/chapter-I/subchapter-N/part-434/subpart-C</p>
+              <p><strong>[6]</strong> NETL, <em>Geological and Environmental Systems</em>, 2025. https://netl.doe.gov/onsite-research/geological</p>
+              <p><strong>[7]</strong> Black, K.J. and Weber, J.G., <em>Treating abandoned mine drainage can protect streams cost effectively and benefit vulnerable communities</em>, <em>Communications Earth &amp; Environment</em>, 2024. https://doi.org/10.1038/s43247-024-01669-0</p>
+              <p><strong>[8]</strong> NETL / OSTI, <em>Targeted Rare Earth Element Extraction from Mine Drainage Treatment Solids Informed by Advanced Characterization</em>, 2024. https://www.osti.gov/biblio/2511302</p>
+              <p><strong>[9]</strong> U.S. EPA SBIR report, <em>In Situ Treatment of Acid Mine Drainage</em>. https://cfpub.epa.gov/ncer_abstracts/index.cfm/fuseaction/display.abstractDetail/abstract_id/1393/report/F</p>
+              <p><strong>[11]</strong> eCFR, <em>30 CFR Part 876: Acid Mine Drainage Treatment and Abatement Program</em>. https://www.ecfr.gov/current/title-30/chapter-VII/subchapter-R/part-876/section-876.1</p>
+              <p><strong>[12]</strong> EU, <em>Directive 2006/21/EC on the management of waste from extractive industries</em>; overview at https://ec.europa.eu/environment/waste/mining/index.htm</p>
+              <p><strong>[13]</strong> Ketellapper and Williams, <em>The control of acid mine drainage at the Summitville Mine Superfund Site</em>, 1996.</p>
+              <p><strong>[14]</strong> <em>Water Quality Improvements Resulting From Mine Reclamation at the Summitville Mine, Colorado</em>, 2002.</p>
+              <p><strong>[15]</strong> Whitehead et al., <em>Chemical behaviour of the Wheal Jane bioremediation system</em>, 2005.</p>
+              <p><strong>[16]</strong> ITRC, <em>Wheal Jane Mine Case Study</em>, pilot passive treatment plant summary.</p>
+              <p><strong>[17]</strong> Chesapeake Bay STAC technical review summarizing PADEP reporting on AMD-impaired stream miles in Pennsylvania, 2025.</p>
+              <p><strong>[18]</strong> Susquehanna River Basin Commission, <em>West Branch Subbasin AMD Remediation Strategy</em>, reporting 1,205 miles impaired in the subbasin.</p>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Open this file in a browser and use arrow keys</span>
+          <span>Slide 11 / 11</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="progress-shell"><div class="progress-bar" id="progress"></div></div>
+    <div class="nav">
+      <button id="prev" type="button">← Prev</button>
+      <button id="next" type="button">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progress = document.getElementById("progress");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    let index = 0;
+
+    function renderSlide() {
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      const pct = ((index + 1) / slides.length) * 100;
+      progress.style.width = pct + "%";
+    }
+
+    function move(step) {
+      index = Math.max(0, Math.min(slides.length - 1, index + step));
+      renderSlide();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        move(1);
+      } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        move(-1);
+      } else if (event.key === "Home") {
+        index = 0;
+        renderSlide();
+      } else if (event.key === "End") {
+        index = slides.length - 1;
+        renderSlide();
+      }
+    });
+
+    prev.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+
+    renderSlide();
+  </script>
+</body>
+</html>
